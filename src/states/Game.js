@@ -21,10 +21,11 @@ export default class extends Phaser.State {
         this.game.world.setBounds(0, 0, 2000, 2000)
 
         this.tree = new Tree(this.game, 250, 250)//  this.game.world.centerX, this.game.world.centerY)
-        this.tree.scale.setTo(2, 2)
+        this.tree2 = new Tree(this.game, 500, 500)//  this.game.world.centerX, this.game.world.centerY)
         // set the sprite width to 30% of the game width
         //setResponsiveWidth(this.tree, 30, this.game.world)
         this.game.add.existing(this.tree)
+        this.game.add.existing(this.tree2)
 
         this.cursors = this.game.input.keyboard.createCursorKeys();
     }

@@ -34,25 +34,29 @@ const system = new LSystem({
     }
 })
 
-const simpleSystem = new LSystem({
-    axiom: ['X'],
-    productions: {
-        X: () => [
-            {symbol: 'F', value: 1},
-            '[',
-            {symbol: '+', value: 20},
-            'X',
-            ']',
-            {symbol: 'F', value: 1},
-            '[',
-            {symbol: '+', value: -20},
-            'X',
-            ']',
-            {symbol: '+', value: 20},
-            'X'
-        ],
-        F: ({part}) => [{symbol: 'F', value: part.value * 2}]
+class SimpleTreeSystem extends LSystem {
+    constructor() {
+        super({
+            axiom: ['X'],
+            productions: {
+                X: () => [
+                    {symbol: 'F', value: 1},
+                    '[',
+                    {symbol: '+', value: 20},
+                    'X',
+                    ']',
+                    {symbol: 'F', value: 1},
+                    '[',
+                    {symbol: '+', value: -20},
+                    'X',
+                    ']',
+                    {symbol: '+', value: 20},
+                    'X'
+                ],
+                F: ({part}) => [{symbol: 'F', value: part.value * 2}]
+            }
+        })
     }
-})
+}
 
-export default simpleSystem
+export default SimpleTreeSystem
