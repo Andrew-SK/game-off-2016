@@ -4,10 +4,13 @@ import radians from 'degrees-radians'
  * Represents a state of the turtle at any time in terms of position and orientation
  */
 class TurtleState {
-    constructor({x = 0, y = 0, angle = 90}) {
+    constructor({x = 0, y = 0, angle = 90, width = 1, color = 0x000000, alpha=1}) {
         this.x = x
         this.y = y
         this.angle = angle
+        this.width = width
+        this.color = color
+        this.alpha = alpha
     }
 
     /**
@@ -29,7 +32,25 @@ export default class TurtleGraphics {
     constructor(graphics) {
         this.graphics = graphics
         this.states = []
-        this.state = new TurtleState({angle: -90})
+        const initialState = new TurtleState({angle: -90, alpha: 0.5})
+        this.loadState(initialState)
+    }
+
+    /**
+     * Sets the current state to the given state
+     * @param {TurtleState} state
+     */
+    loadState(state){
+        this.state = state
+    }
+
+    /**
+     * Syncs the state and Graphics object so any future line drawing uses the newest state
+     */
+    syncStateAndGraphics(){
+        this.graphics.moveTo(this.state.x, this.state.y)
+        const roundedWidth = this.state.width//Math.floor(this.state.width)
+        this.graphics.lineStyle(roundedWidth, this.state.color, this.state.alpha)
     }
 
     /**
@@ -62,12 +83,11 @@ export default class TurtleGraphics {
             let symbol = item.symbol || item
             switch (symbol) {
                 case 'F':
-                    this.state = this.getNextLocation(item.value || 1)
+                    this.loadState(this.getNextLocation(item.value || 2))
                     this.graphics.lineTo(this.state.x, this.state.y)
                     break
                 case 'f':
-                    this.state = this.getNextLocation(item.value || 1)
-                    this.graphics.moveTo(this.state.x, this.state.y)
+                    this.loadState(this.getNextLocation(item.value || 1))
                     break
                 case '+':
                     this.state.angle += item.value || 1
@@ -78,14 +98,13 @@ export default class TurtleGraphics {
                     this.states.push(this.state.clone())
                     break
                 case ']':
-                    const newState = this.states.pop()
-                    this.state = newState
-                    this.graphics.moveTo(newState.x, newState.y)
+                    this.loadState(this.states.pop())
                     break
                 case '!':
-                    this.graphics.lineWidth *= item.value || 1
+                    this.state.width = item.value || 1
                     break
             }
+            this.syncStateAndGraphics()
         }
     }
 }
