@@ -39,17 +39,17 @@ const simpleSystem = new LSystem({
     productions: {
         X: () => [
             {symbol: 'F', value: 1},
-            {symbol: '['},
+            '[',
             {symbol: '+', value: 20},
-            {symbol: 'X'},
-            {symbol: ']'},
+            'X',
+            ']',
             {symbol: 'F', value: 1},
-            {symbol: '['},
+            '[',
             {symbol: '+', value: -20},
-            {symbol: 'X'},
-            {symbol: ']'},
+            'X',
+            ']',
             {symbol: '+', value: 20},
-            {symbol: 'X'},
+            'X'
         ],
         F: ({part}) => [{symbol: 'F', value: part.value * 2}]
     }

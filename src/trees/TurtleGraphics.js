@@ -1,61 +1,81 @@
-import degToRadians from 'degrees-radians'
+import radians from 'degrees-radians'
 
-function radians(x) {
-    return degToRadians(x + 90)
-}
-
+/**
+ * Represents a state of the turtle at any time in terms of position and orientation
+ */
 class TurtleState {
-    constructor(x, y, angle) {
+    constructor({x = 0, y = 0, angle = 90}) {
         this.x = x
         this.y = y
         this.angle = angle
     }
 
-    static fromTurtle(turtleGraphics) {
-        return new TurtleState(turtleGraphics.graphics.x, turtleGraphics.graphics.y, turtleGraphics.angle)
+    /**
+     * Creates and return a shallow copy of the TurtleState.
+     * This should be sufficient since all fields are integers
+     */
+    clone() {
+        return new TurtleState(this)
     }
 }
 
+/**
+ * A turtle that can be used to generate Phaser Graphics and Textures from L-Systems
+ */
 export default class TurtleGraphics {
+    /**
+     * Makes a new TurtleGraphics with the given Phaser graphics object
+     */
     constructor(graphics) {
         this.graphics = graphics
         this.states = []
-        this.state = new TurtleState(0, 0, 180)
+        this.state = new TurtleState({angle: -90})
     }
 
+    /**
+     * Returns a PIXI texture from the TurtleGraphics's path. This can be used as a sprite
+     * @returns {Texture}
+     */
     getTexture() {
         return this.graphics.generateTexture()
     }
 
+    /**
+     * Returns the next state the turtle will occupy if if moves the given distance forward
+     * @param {number} distance
+     * @returns {TurtleState} A TurtleState instance representing the next state
+     */
     getNextLocation(distance) {
-        const new_x = this.state.x + distance * Math.cos(radians(this.state.angle))
-        const new_y = this.state.y + distance * Math.sin(radians(this.state.angle))
-        console.log(`Radians is ${radians}. Radians of 0 is ${radians(0)}`)
-        return [new_x, new_y]
+        const newState = this.state.clone()
+        newState.x += distance * Math.cos(radians(this.state.angle))
+        newState.y += distance * Math.sin(radians(this.state.angle))
+        return newState
     }
 
+    /**
+     * Processes an array of symbol objects or a string containing many symbols
+     * @param {string|Object[]} instructions
+     */
     process(instructions) {
-        for (let symbol of instructions) {
-            switch (symbol.symbol) {
+        for (let item of instructions) {
+            //If the item is an object, switch on its symbol property. Otherwise it's a string, so use its value instead
+            let symbol = item.symbol || item
+            switch (symbol) {
                 case 'F':
-                    let nextLoc = this.getNextLocation(symbol.value)
-                    this.state.x = nextLoc[0]
-                    this.state.y = nextLoc[1]
+                    this.state = this.getNextLocation(item.value || 1)
                     this.graphics.lineTo(this.state.x, this.state.y)
                     break
                 case 'f':
-                    let nextLoca = this.getNextLocation(symbol.value)
-                    this.state.x = nextLoca[0]
-                    this.state.y = nextLoca[1]
+                    this.state = this.getNextLocation(item.value || 1)
                     this.graphics.moveTo(this.state.x, this.state.y)
                     break
                 case '+':
-                    this.state.angle += symbol.value
+                    this.state.angle += item.value || 1
                     while (this.state.angle > 360)
                         this.state.angle -= 360
                     break
                 case '[':
-                    this.states.push(Object.assign({}, this.state))
+                    this.states.push(this.state.clone())
                     break
                 case ']':
                     const newState = this.states.pop()
@@ -63,10 +83,9 @@ export default class TurtleGraphics {
                     this.graphics.moveTo(newState.x, newState.y)
                     break
                 case '!':
-                    this.graphics.lineWidth *= symbol.value
+                    this.graphics.lineWidth *= item.value || 1
                     break
             }
         }
-
     }
 }
