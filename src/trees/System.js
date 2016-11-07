@@ -23,13 +23,18 @@ export class ComplexTreeSystem extends LSystem {
             ],
             productions: {
                 'A': ({part}) => [
+                    'L',
                     {symbol: '!', value: width_increase_rate},
                     {symbol: 'F', value: 50},
+                    'L',
                     ...branch_segment,
+                    'L',
                     {symbol: '+', value: div_1},
                     ...branch_segment,
+                    'L',
                     {symbol: '+', value: div_2},
-                    ...branch_segment
+                    ...branch_segment,
+                    'L'
                 ],
                 'F': ({part}) => [{symbol: 'F', value: elongation_rate * part.value}],
                 '!': ({part}) => [{symbol: '!', value: width_increase_rate * part.value}]

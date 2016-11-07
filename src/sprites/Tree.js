@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
 import {SimpleTreeSystem, ComplexTreeSystem} from '../trees/System'
-import Turtle from '../trees/TurtleGraphics'
+import Turtle from '../trees/TreeTurtleGraphics'
 
 export default class extends Phaser.Sprite {
     constructor({game, x, y, System = SimpleTreeSystem}) {
@@ -8,13 +8,14 @@ export default class extends Phaser.Sprite {
         // Create a Phaser graphics context to draw with
         const graphics = game.add.graphics(x, y)
         graphics.lineStyle(1, 0x000000, 1);
+        graphics.beginFill(0x4F7942, 0.5);
 
         // Create an L-System to generate the tree
         const system = new System()
 
         // Create a turtle to convert the system into lines, and feed the turtle the iterated system
         const turtle = new Turtle(graphics)
-        turtle.process(system.iterate(6))
+        turtle.process(system.iterate(7))
 
         // Create a sprite using the generated texture
         super(game, x, y, turtle.getTexture())

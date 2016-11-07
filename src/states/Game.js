@@ -21,7 +21,7 @@ export default class extends Phaser.State {
 
         // Create a complex (WIP) tree
         this.tree2 = new Tree({game: this.game, x: 300, y: 300, System: ComplexTreeSystem})//  this.game.world.centerX, this.game.world.centerY)
-        this.tree2.scale.setTo(0.20, 0.20)
+        this.tree2.scale.setTo(0.10, 0.10)
         this.game.add.existing(this.tree2)
 
         // set the sprite width to 30% of the game width

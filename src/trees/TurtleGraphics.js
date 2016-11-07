@@ -79,32 +79,40 @@ export default class TurtleGraphics {
      */
     process(instructions) {
         for (let item of instructions) {
-            //If the item is an object, switch on its symbol property. Otherwise it's a string, so use its value instead
-            let symbol = item.symbol || item
-            switch (symbol) {
-                case 'F':
-                    this.loadState(this.getNextLocation(item.value || 2))
-                    this.graphics.lineTo(this.state.x, this.state.y)
-                    break
-                case 'f':
-                    this.loadState(this.getNextLocation(item.value || 1))
-                    break
-                case '+':
-                    this.state.angle += item.value || 1
-                    while (this.state.angle > 360)
-                        this.state.angle -= 360
-                    break
-                case '[':
-                    this.states.push(this.state.clone())
-                    break
-                case ']':
-                    this.loadState(this.states.pop())
-                    break
-                case '!':
-                    this.state.width = item.value || 1
-                    break
-            }
+            this.processSymbol(item)
             this.syncStateAndGraphics()
+        }
+    }
+
+    /**
+     * Process an individual symbol character or symbol object
+     * @param {string|Object} item
+     */
+    processSymbol(item){
+        //If the item is an object, switch on its symbol property. Otherwise it's a string, so use its value instead
+        let symbol = item.symbol || item
+        switch (symbol) {
+            case 'F':
+                this.loadState(this.getNextLocation(item.value || 2))
+                this.graphics.lineTo(this.state.x, this.state.y)
+                break
+            case 'f':
+                this.loadState(this.getNextLocation(item.value || 1))
+                break
+            case '+':
+                this.state.angle += item.value || 1
+                while (this.state.angle > 360)
+                    this.state.angle -= 360
+                break
+            case '[':
+                this.states.push(this.state.clone())
+                break
+            case ']':
+                this.loadState(this.states.pop())
+                break
+            case '!':
+                this.state.width = item.value || 1
+                break
         }
     }
 }
