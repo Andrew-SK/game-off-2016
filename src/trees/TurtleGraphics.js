@@ -28,12 +28,13 @@ class TurtleState {
 export default class TurtleGraphics {
     /**
      * Makes a new TurtleGraphics with the given Phaser graphics object
+     * @param graphics A Phaser graphics object with which to draw (line style is ignored)
+     * @param initialState An object that can be used to set starting turtle options
      */
-    constructor(graphics) {
+    constructor(graphics, initialState) {
         this.graphics = graphics
         this.states = []
-        const initialState = new TurtleState({angle: -90, alpha: 0.5})
-        this.loadState(initialState)
+        this.loadState(new TurtleState(initialState || {angle: -90}))
     }
 
     /**
