@@ -26,7 +26,6 @@
   },
   "dependencies": {
     "lodash": "^4.16.6",
-    "phaser": "^2.6.2",
-    "random-number": "0.0.7"
+    "phaser": "^2.6.2"
   }
 }

@@ -4,7 +4,19 @@ import Tree from '../sprites/Tree'
 import {setResponsiveWidth} from '../utils'
 import {SimpleTreeSystem, ComplexTreeSystem, CsiroTreeSystem} from '../trees/System'
 import _ from 'lodash'
-import random from 'random-number'
+
+function randomSign(){
+    const signs = [-1, 1]
+    return _.sample(signs)
+}
+
+function random({min, max, integer = false, randSign = false}) {
+    const num = _.random(min, max, !integer)
+    if (randSign)
+        return randomSign() * num
+    else
+        return num
+}
 
 export default class extends Phaser.State {
     init() {
@@ -25,21 +37,42 @@ export default class extends Phaser.State {
         _(_.range(treesWide))
             .flatMap(i => _.range(treesHigh).map(j => ({x: i, y: j})))
             .forEach(({x, y}) => {
+                //Calculate branching angles
+                let a1, a2
+
+                //50% change the branches are on the same side
+                if (random({min: 0, max: 1}) > 0.5){
+                    let side = randomSign()
+                    //Ensure the angle between a1 and a2 is at least 30 degrees
+                    do {
+                        a1 = side * random({min: 10, max: 80, integer: true})
+                        a2 = side * random({min: 10, max: 80, integer: true})
+                    } while (Math.abs(a1 - a2) < 30)
+                }
+                //Otherwise, they are on opposite sides
+                else
+                {
+                    let randomSigns = _.shuffle([-1, 1])
+                    a1 = randomSigns[0] * random({min: 10, max: 80, integer: true})
+                    a2 = randomSigns[1] * random({min: 10, max: 80, integer: true})
+                }
+
+                let values = {
+                    r1: random({min: 0.6, max: 0.9}),
+                    r2: random({min: 0.6, max: 0.9}),
+                    a1,
+                    a2,
+                    w0: random({min: 10, max: 30, integer: true}),
+                    q: random({min: 0.3, max: 0.7}),
+                    e: random({min: 0.5, max: 0.5}),
+                    min: random({min: 0, max: 10}),
+                    n: random({min: 8, max: 12, integer: true}),
+                }
                 let tree = new Tree({
                     game: this.game,
                     x: x * treeWidth,
                     y: y * treeHeight,
-                    system: new CsiroTreeSystem({
-                        r1: random({min: 0.5, max: 1}),
-                        r2: random({min: 0.2, max: 1}),
-                        a1: random({min: -5, max: 50, integer: true}),
-                        a2: random({min: -100, max: 100, integer: true}),
-                        w0: random({min: 0, max: 50, integer: true}),
-                        q: random({min: 0.4, max: 0.6}),
-                        e: random({min: 0, max: 0.5}),
-                        min: random({min: 0, max: 25}),
-                        n: random({min: 8, max: 12, integer: true}),
-                    })
+                    system: new CsiroTreeSystem(values)
                 })
 
                 //Calculate the scale that allows it to be as big as possible without ruining the aspect ratio
@@ -48,6 +81,13 @@ export default class extends Phaser.State {
                 let scale = Math.min(widthScale, heightScale)
                 tree.scale.setTo(scale, scale)
                 this.game.add.existing(tree)
+
+                //Attach the parameters to the sprite and print out the values when it's clicked
+                tree.systemParams = values
+                tree.inputEnabled = true
+                tree.events.onInputDown.add(sprite => {
+                    window.alert(JSON.stringify(sprite.systemParams, null, 4))
+                }, this);
             })
 
         /*

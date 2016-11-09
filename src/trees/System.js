@@ -91,6 +91,19 @@ export class CsiroTreeSystem {
         return this.system.iterate(iterations || this.n)
     }
 
+    /**
+     * Creates a new CSIRO tree system using the given parameters or defaults
+     * @param r1 Decrease in internode length as the tree branches
+     * @param r2 Decrease in internode length as the tree branches
+     * @param a1 The orientation of the branches with respect to the previous internode
+     * @param a2 The orientation of the branches with respect to the previous internode
+     * @param w0 The initial stem width
+     * @param q Difference in width between branches branching from the same point
+     * @param e The size of the branches with respect to the parent branch. When e=1, the child branches are much
+     * smaller than the parent. When e=0, they are the same size
+     * @param min The minimal size branch before the branch is not drawn
+     * @param n The number of iterations performed on the system
+     */
     constructor({r1 = 0.75, r2 = 0.77, a1 = 35, a2 = -35, w0 = 30, q = 0.50, e = 0.40, min = 0, n = 10} = {}) {
         this.n = n
         this.system = new LSystem({
