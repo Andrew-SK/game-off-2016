@@ -25,6 +25,8 @@
     "webpack": "^1.13.2"
   },
   "dependencies": {
-    "phaser": "^2.6.2"
+    "lodash": "^4.16.6",
+    "phaser": "^2.6.2",
+    "random-number": "0.0.7"
   }
 }
